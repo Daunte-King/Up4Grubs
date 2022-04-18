@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+
+{% if grub %}
+<h1 class="grubs"> Edit </h1>
+{% comment %} add object item name for edit later {% endcomment %}
+{% else %}
+<h1 class="grubs"> Add grub </h1>
+{% endif %}
+<form action='' method='POST'>
+    {% csrf_token %}
+    <table>
+        {{ form.as_table}}
+    </table>
+    <input type='submit' value='submit'>
+</form>
+<script>
+    let autocomplete
+    function initAutoComplete() {
+      autocomplete = new google.maps.places.Autocomplete(document.getElementById('id_location'),
+      {
+          types:[], 
+          componentRestriction: {'country': ['US']}, 
+          fields: ['place_id','geometry', 'name']
+      })
+    }
+</script>
+<script async
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiH0QlCu3l2RAkwcOgav_N891BxYmuEf4&libraries=places&callback=initAutoComplete">
+    {% comment %} find a fay to hind our api key {% endcomment %}
+</script>
+
+{% endblock %}

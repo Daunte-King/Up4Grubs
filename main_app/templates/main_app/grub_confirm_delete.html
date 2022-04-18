@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content%}
+
+
+<span class="card-title">delete</span>
+<p>are you sure you want to delete?</p>
+<br>
+<form action='' method='POST'>
+    {% csrf_token %}
+    <input type='submit' value='DELETE'>
+    <a href="{% url 'grubs_detail' grub.id %}">cancel</a>
+</form>
+
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{%  block content %}
+
+
+
+<div class="card-content">
+    <h1 class="grubs">grub details</h1>
+    <span class="card-title">{{ grub.item }}</span>
+    <p>type: {{grub.type}}</p>
+    <p>use-by: {{grub.exp}}</p>
+    <p>{{grub.desc}}</p>
+    <p>price: ${{grub.price}}</p>
+</div>
+<div class="card-action">
+    <a href='{% url 'grubs_update' grub.id %}'> EDIT </a>
+    <a href='{% url 'grubs_delete' grub.id %}'> DELETE </a>
+</div>
+<form action="{% url 'add_photo' grub.id %}" enctype='multipart/form-data' method='POST' class='card-panel'>
+    {% csrf_token %}
+    <input type='file' name='photo-file'>
+    <br><br>
+    <input type=submit class='btn' value='Upload Photo'>
+</form>
+<div>
+    {% for photo in grub.photo_set.all %}
+    <img class='responsive-img card-panel' src="{{ photo.url}}">
+    {% empty %}
+    <div class="card-panel center-align">No Photos Uploaded</div>
+    {% endfor %}
+</div>
+<label>Location:</label><p id='location'>{{grub.location}}</p>
+<div id="map" style="width:100%;height:400px;"></div>
+ <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+<script>
+    async function initMap() {
+         let location = document.getElementById('location')
+        response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${location.innerText}&key=AIzaSyDiH0QlCu3l2RAkwcOgav_N891BxYmuEf4`)
+         let data = await response.json()
+         let result = data.results
+         let lat, lng
+         for (element of result){
+             lat = element.geometry.location.lat
+             lng = element.geometry.location.lng
+            }
+            // The location of pick up/ delivery
+            const coordinates = { lat: Number(`${lat}`), lng: Number(`${lng}`) };
+            console.log(coordinates)
+              // The map, centered at loction
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 4,
+             center: coordinates,
+        });
+                // The marker, positioned at Uluru
+         const marker = new google.maps.Marker({
+                    position: coordinates,
+                    map: map,
+         });
+     }
+</script>
+<script async src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDiH0QlCu3l2RAkwcOgav_N891BxYmuEf4&callback=initMap'>
+</script>
+            
+
+
+{%  endblock %}
